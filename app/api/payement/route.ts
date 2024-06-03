@@ -38,7 +38,24 @@ export const POST = async (request: NextRequest) => {
       mode: "payment",
       success_url: "http://localhost:3000/success?token=" + customer.id,
       cancel_url: "http://localhost:3000/cancel?token=" + customer.id,
+      line_items: [
+        {
+          quantity: 1,
+          price_data: {
+            product_data: {
+              name: data.title,
+            },
+            currency: "EUR",
+            unit_amount: amountInCents,
+          },
+        },
+      ],
     });
+    console.log(checkoutSession.url);
+    return NextResponse.json(
+      { msg: checkoutSession, url: checkoutSession.url },
+      { status: 200 }
+    );
   } catch (error: any) {
     console.log(error);
     return NextResponse.json({ error: error.message }, { status: 500 });

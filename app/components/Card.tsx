@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import { useState } from "react";
 
 interface CardProps {
@@ -13,6 +14,26 @@ interface CardProps {
 
 export default function Card({ item }: CardProps) {
   const [loading, setLoading] = useState(false);
+
+  const checkout = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.post("/api/payement", {
+        title: item.title,
+        price: item.price,
+        image: item.image,
+      });
+
+      const ResponceData = await response.data;
+      console.log(ResponceData);
+      window.location.href = ResponceData.url;
+      
+    } catch (error: any) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
@@ -30,6 +51,7 @@ export default function Card({ item }: CardProps) {
             </p>
             <p className="text-gray-700 mb-4">{item.description}</p>
             <button
+              onClick={checkout}
               disabled={loading}
               className="bg-green-500 hover:bg-green-600 p-2 rounded-md text-white"
             >
