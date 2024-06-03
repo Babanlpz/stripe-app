@@ -29,7 +29,10 @@ export default function Card({ item }: CardProps) {
               {item.price} € / day
             </p>
             <p className="text-gray-700 mb-4">{item.description}</p>
-            <button className="bg-green-500 hover:bg-green-600 p-2 rounded-md text-white">
+            <button
+              disabled={loading}
+              className="bg-green-500 hover:bg-green-600 p-2 rounded-md text-white"
+            >
               {loading ? "Chargement.." : "Acheter"}
             </button>
           </h3>
