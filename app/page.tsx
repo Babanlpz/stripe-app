@@ -1,7 +1,11 @@
+import  List  from './components/List';
+import activity from "../app/data/data.json"
+
+
 export default function Home() {
   return (
     <>
-      <h1>hello</h1>
+      <List activity={activity} />
     </>
   );
 }
