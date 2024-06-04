@@ -12,52 +12,59 @@ interface Data {
 export const POST = async (request: NextRequest) => {
   try {
     const data: Data = await request.json();
-    console.log(data);
+    console.log("Data received:", data);
 
     const customer = await stripe.customers.create({
       email: "customer@exemple.com",
       address: {
-        city: "Paris",
-        country: "France",
-        line1: "1 rue de la paix",
-        postal_code: "75000",
-        state: "IDF",
+        city: "Los Angeles",
+        country: "US",
+        postal_code: "00000",
+        line1: "rue de la paix",
+        state: "CA",
       },
-      name: "John Doe",
+      name: "Jonathan MDC",
     });
-    console.log(customer);
+    console.log("Customer created:", customer);
 
-    const amountInCents = Math.round(data.price * 100);
+    // Conversion du prix en centimes (Stripe fonctionne avec des centimes)
+    const amountInCents = Math.round(data.price * 100); // Convertir en centimes
     if (amountInCents < 50) {
-      throw new Error("Amount must be at least 50 cents");
+      // Vérification que le montant est au moins de 50 centimes
+      throw new Error(
+        "The price is too low, must be at least 0.50 in your currency."
+      );
     }
 
-    const checkoutSession = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
+    const checkOutSession = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"], // Méthodes de paiement acceptées
       customer: customer.id,
-      mode: "payment",
-      success_url: "http://localhost:3000/success?token=" + customer.id,
-      cancel_url: "http://localhost:3000/cancel?token=" + customer.id,
+      mode: "payment", // Mode de paiement unique
+      success_url: "http://localhost:3001/success?token=" + customer.id, // URL de succès
+      cancel_url: "http://localhost:3001/cancel?token=" + customer.id, // URL d'annulation
       line_items: [
         {
           quantity: 1,
           price_data: {
             product_data: {
-              name: data.title,
+              name: data.title, // Nom du produit
             },
-            currency: "EUR",
-            unit_amount: amountInCents,
+            currency: "EUR", // Devise utilisée
+            unit_amount: amountInCents, // Montant en centimes
           },
         },
       ],
     });
-    console.log(checkoutSession.url);
+    console.log("Checkout session created:", checkOutSession.url);
+
+    // Retourner une réponse JSON avec l'URL de la session de paiement
     return NextResponse.json(
-      { msg: checkoutSession, url: checkoutSession.url },
+      { msg: checkOutSession, url: checkOutSession.url },
       { status: 200 }
     );
   } catch (error: any) {
-    console.log(error);
+    // Gestion des erreurs et retour d'une réponse JSON avec le message d'erreur
+    console.error("Error occurred:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 };

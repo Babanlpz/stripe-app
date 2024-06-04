@@ -22,17 +22,21 @@ export default function SuccessPage() {
   }
 
   return (
-    <div className="w-full h-screnn flex items-center justify-center flex-col gap-3 text-center">
+    <div className="w-full h-screen flex items-center justify-center flex-col gap-3 text-center">
       <h1>✅ Paiment réussi !</h1>
 
-      {customerData ? <div>
-        <p>Merci pour votre achat, {customerData?.name}</p>
-        <ul>
-          <li>
-            <strong>Email:</strong> {customerData?.email}
-          </li>
+      {customerData ? (
+        <div>
+          <p>Merci pour votre achat, {customerData?.name}</p>
+          <ul>
+            <li>
+              <strong>Email:</strong> {customerData?.email}
+            </li>
           </ul>
-      </div> : <p>Loading data..</p>}
+        </div>
+      ) : (
+        <p>Loading data..</p>
+      )}
     </div>
   );
 }
